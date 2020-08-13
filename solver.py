@@ -14,12 +14,13 @@ Kill conditions:
 
 def resolve_current(action_id, current_1, size_1, current_2, size_2, target, already_tried, path):
     if target in (current_1, current_2):
+        print(f'Found a solution at path length {len(path)}; {current_1}/{size_1}, {current_2}/{size_2}')
         path.append([action_id, current_1, current_2, len(path)])
         return path
     else:
         if [current_1, current_2] in already_tried:
-            print(already_tried)
-            print(f'killing {current_1}/{size_1}, {current_2}/{size_2} with a path length of {len(path)-1}')
+            #print(already_tried)
+            #print(f'killing {current_1}/{size_1}, {current_2}/{size_2} with a path length of {len(path)-1}')
             return None
         else:
             already_tried.append([current_1, current_2])
@@ -33,7 +34,7 @@ def empty_1(current_1, size_1, current_2, size_2, target, already_tried, path):
     #print(f'empty 1:{current_1}/{size_1}, {current_2}/{size_2}')
     #in theory there is no way you should ever reach a target by emptying a container
     #but i guess it's here anyways
-    return resolve_current(1, current_1, size_1, current_2, size_2, target, already_tried, path)
+    return resolve_current(0, current_1, size_1, current_2, size_2, target, already_tried, path)
 def empty_2(current_1, size_1, current_2, size_2, target, already_tried, path):
     current_2 = 0
     #print(f'empty 2:{current_1}/{size_1}, {current_2}/{size_2}')
@@ -43,8 +44,9 @@ def fill_1(current_1, size_1, current_2, size_2, target, already_tried, path):
     #print(f'fill 1:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(2, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_2(current_1, size_1, current_2, size_2, target, already_tried, path):
+    print(f'fill 2:{current_1}/{size_1}, {current_2}/{size_2} - {len(path)}')
     current_2 = size_2
-    #print(f'fill 2:{current_1}/{size_1}, {current_2}/{size_2}')
+    print(f'fill 2:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(3, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path):
     #print(f'1 from 2 start:{current_1}/{size_1}, {current_2}/{size_2}')
@@ -69,46 +71,49 @@ def fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, p
 def branch(current_1, size_1, current_2, size_2, target, already_tried, path):
     #print(f'{current_1}/{size_1}, {current_2}/{size_2}')
     a = empty_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    b = empty_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    c = fill_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    d = fill_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    e = fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    f = fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    #only ever return one
     if a:
         #print("returning a")
         return a
-    elif b:
+    b = empty_2(current_1, size_1, current_2, size_2, target, already_tried, path)
+    if b:
         #print("returning b")
         return b
-    elif c:
+    c = fill_1(current_1, size_1, current_2, size_2, target, already_tried, path)
+    if c:
         #print("returning c")
         return c
-    elif d:
+    d = fill_2(current_1, size_1, current_2, size_2, target, already_tried, path)
+    if d:
         #print("returning d")
         return d
-    elif e:
+    e = fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path)
+    if e:
         #print("returning e")
         return e
-    elif f:
+    f = fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path)
+    if f:
         #print("returning f")
         return f
-    #else:
-        #print("all branches failed")
+    else:
+        return None
 
 def solve(size_1, size_2, target):
     #below are always invalid and should always kill a branch
     invalid = [[0, 0], [size_1, size_2]]
     resulting_path = branch(0, size_1, 0, size_2, target, invalid, [])
     if resulting_path:
-        #turn_into_human_language(size_1, size_2, resulting_path)
+        turn_into_human_language(size_1, size_2, resulting_path)
         print(resulting_path)
 
 def turn_into_human_language(size_1, size_2, final_path):
     current_1 = 0
     current_2 = 0
     print(f'Start: {current_1}/{size_1}, {current_2}/{size_2}')
-    for action in final_path:
+    for element in final_path:
+        action = element[0]
+        current_1 = element[1]
+        current_2 = element[2]
+
         if action == 0:
             current_1 = 0
             print(f'Empty container 1: {current_1}/{size_1}, {current_2}/{size_2}')
