@@ -1,5 +1,5 @@
 {
-    "app_name": "Water Pouring Puzzle Solver",
+    "app_name": "water-pouring-puzzle-solver",
     "author": "lgactna",
     "main_module": "src/main/python/main.py",
     "version": "1.0.0"
