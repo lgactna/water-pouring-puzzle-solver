@@ -1,11 +1,14 @@
 # water-pouring-puzzle-solver
-A solver for water pouring riddles.
+A program for solving two-container water pouring puzzles.
 
 I got angry enough at one of these that this one-day project was the result.
 
 This solver uses exhaustive search (with partial memoization) - it's inefficient but it works. 
 
 ## Usage
+
+See [solver_standalone.py](src/main/python/solver_standalone.py) for the base, non-ui version of the solver.
+
 1. eee
 2. f
 
@@ -31,6 +34,6 @@ To solve this problem:
 - Determine if the target capacity has been reached.
   - If so, return a full list of the actions and steps up to this point.
   - If not, check if a permutation of the current capacities of the two containers has already been tested at some earlier point in time.
-    - If so, kill this branch (and make no further calculations).
+    - If so, kill this branch (perform no addition actions with these container states).
     - If not, go back to the first step with the new states of the containers. Add this action and step to an ongoing list. 
 

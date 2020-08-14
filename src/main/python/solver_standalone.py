@@ -123,6 +123,8 @@ def solve(size_1, size_2, target, initial_1=0, initial_2=0):
     if resulting_path:
         turn_into_human_language(size_1, size_2, resulting_path, initial_1, initial_2)
         print(resulting_path)
+    else:
+        print("Failed. All branches returned dead.")
 
 def turn_into_human_language(size_1, size_2, final_path, initial_1=0, initial_2=0):
     """Output the process into a human-readable format."""

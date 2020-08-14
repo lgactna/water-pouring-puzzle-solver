@@ -112,6 +112,8 @@ def solve(size_1, size_2, target, initial_1=0, initial_2=0):
         return 1
     if resulting_path:
         return resulting_path
+    else:
+        return 2
 
 def to_readable(size_1, size_2, final_path, initial_1=0, initial_2=0):
     """Output the process into a human-readable format."""
@@ -157,7 +159,7 @@ def to_readable(size_1, size_2, final_path, initial_1=0, initial_2=0):
     final += (f'Target reached: {current_1}/{size_1}, {current_2}/{size_2}\n')
     return final
 
-def action(index):
+def action_str(index):
     """Return a string describing the action associated with `index`."""
     actions = {
         0:"Empty container 1.",

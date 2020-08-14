@@ -1,6 +1,6 @@
 {
     "categories": "Utility;",
-    "description": "",
+    "description": "A program for solving two-container water pouring puzzles.",
     "author_email": "",
-    "url": ""
+    "url": "https://github.com/lgactna/water-pouring-puzzle-solver"
 }
