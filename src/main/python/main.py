@@ -19,6 +19,12 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.solution = []
         self.problem_parameters = []
 
+        #here we'll define how the playback_timer should work 
+        #if a user is stepping through at intervals
+        self.playback_timer = QtCore.QTimer()
+        #this should always result in incrementing the index
+        self.playback_timer.timeout.connect(lambda: self.update_solution_area(self.step_spinbox.value()))
+
         self.solution_table.setColumnWidth(2, 200)
 
         self.container_2_bar.setFixedHeight(150) #make a ratio calculation thing somewhere, where "all the way up" is 25 capacity
@@ -26,6 +32,7 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.solve_button.clicked.connect(self.get_solution)
         self.step_back_button.clicked.connect(lambda: self.change_step_from_buttons("back"))
         self.step_forward_button.clicked.connect(lambda: self.change_step_from_buttons("forward"))
+        self.play_solution_button.clicked.connect(self.toggle_solution_playback)
         self.step_spinbox.valueChanged.connect(self.change_step_from_spinbox)
         self.solution_table.currentItemChanged.connect(self.change_step_from_table)
     def get_solution(self):
@@ -140,9 +147,24 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.container_1_label.setText(f"{current_step[1]}/{self.problem_parameters[0]}")
         self.container_2_label.setText(f"{current_step[2]}/{self.problem_parameters[1]}")
         self.step_description_label.setText(action_str(current_step[0]))
-    def play_through_solution(self):
-        """Start a QTimer that will automatically step through the solution at regular intervals."""
-        pass
+        #if we've hit the end, then stop playback and change button text
+        if self.playback_timer.isActive() and index+1 == len(self.solution):
+            self.playback_timer.stop()
+            self.play_solution_button.setText("Play through solution")
+    def toggle_solution_playback(self):
+        """Toggle a QTimer that will automatically step through the solution at regular intervals.
+        
+        Also change the button text to reflect what will happen."""
+        if self.playback_timer.isActive():
+            self.playback_timer.stop()
+            self.play_solution_button.setText("Play through solution")
+        else:
+            #go to beginning if currently at end
+            if self.step_spinbox.value() == len(self.solution):
+                self.update_solution_area(0)
+            interval = self.steprate_spinbox.value()
+            self.playback_timer.start(interval)
+            self.play_solution_button.setText("Stop playback")
 class AppContext(ApplicationContext):
     """fbs requires that one instance of ApplicationContext be instantiated.
 
