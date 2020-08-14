@@ -27,6 +27,8 @@ You can click on a row in the table to jump to that step. Alternatively, you can
 
 *Note: the progress bar resize function is somewhat flaky. They are resized when "solve" is clicked (after which the window cannot be resized to be smaller). Close the program or pick some small container sizes to fix.*
 
+An interesting workaround to the recursion depth limit (which was not implemented into this program) is to get the last state of the containers before the recursion error, then restart with the same parameters + the starting volumes.
+
 ## Question/Definition of problem
 *If container A has capacity x and container B has capacity y, then what steps must be taken such that either container A or container B hold the target volume z?*
 
