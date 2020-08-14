@@ -12,9 +12,14 @@ Kill conditions:
 - If a previous state (set at global level in the format [[<1>,<2>],...] is reached after performing an action, destroy that branch
 - If either is the desired fill level, return that branch'''
 
+#I tried this first without guidance - as you can tell, it's pretty bad
+#Here's a more elegant solution:
+#https://www.geeksforgeeks.org/water-jug-problem-using-memoization/?ref=rp
+#But this is the first time I've ever done work with recursion so at least it's better than nothing
+
 def resolve_current(action_id, current_1, size_1, current_2, size_2, target, already_tried, path):
     if target in (current_1, current_2):
-        print(f'Found a solution at path length {len(path)}; {current_1}/{size_1}, {current_2}/{size_2}')
+        #print(f'Found a solution at path length {len(path)}; {current_1}/{size_1}, {current_2}/{size_2}')
         path.append([action_id, current_1, current_2, len(path)])
         return path
     else:
@@ -31,33 +36,23 @@ def resolve_current(action_id, current_1, size_1, current_2, size_2, target, alr
 
 def empty_1(current_1, size_1, current_2, size_2, target, already_tried, path):
     current_1 = 0
-    #print(f'empty 1:{current_1}/{size_1}, {current_2}/{size_2}')
-    #in theory there is no way you should ever reach a target by emptying a container
-    #but i guess it's here anyways
     return resolve_current(0, current_1, size_1, current_2, size_2, target, already_tried, path)
 def empty_2(current_1, size_1, current_2, size_2, target, already_tried, path):
     current_2 = 0
-    #print(f'empty 2:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(1, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_1(current_1, size_1, current_2, size_2, target, already_tried, path):
     current_1 = size_1
-    #print(f'fill 1:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(2, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_2(current_1, size_1, current_2, size_2, target, already_tried, path):
-    print(f'fill 2:{current_1}/{size_1}, {current_2}/{size_2} - {len(path)}')
     current_2 = size_2
-    print(f'fill 2:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(3, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path):
-    #print(f'1 from 2 start:{current_1}/{size_1}, {current_2}/{size_2}')
     if size_1 - current_1 > current_2:
         current_1 += current_2
         current_2 = 0
     else:
         current_2 -= size_1 - current_1
         current_1 = size_1
-    #print(f'1 from 2 end:{current_1}/{size_1}, {current_2}/{size_2}')
-    #print(f'1 from 2:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(4, current_1, size_1, current_2, size_2, target, already_tried, path)
 def fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path):
     if size_2 - current_2 > current_1:
@@ -66,33 +61,25 @@ def fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, p
     else:
         current_1 -= size_2 - current_2
         current_2 = size_2
-    #print(f'2 from 1:{current_1}/{size_1}, {current_2}/{size_2}')
     return resolve_current(5, current_1, size_1, current_2, size_2, target, already_tried, path)
 def branch(current_1, size_1, current_2, size_2, target, already_tried, path):
-    #print(f'{current_1}/{size_1}, {current_2}/{size_2}')
     a = empty_1(current_1, size_1, current_2, size_2, target, already_tried, path)
     if a:
-        #print("returning a")
         return a
     b = empty_2(current_1, size_1, current_2, size_2, target, already_tried, path)
     if b:
-        #print("returning b")
         return b
     c = fill_1(current_1, size_1, current_2, size_2, target, already_tried, path)
     if c:
-        #print("returning c")
         return c
     d = fill_2(current_1, size_1, current_2, size_2, target, already_tried, path)
     if d:
-        #print("returning d")
         return d
     e = fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path)
     if e:
-        #print("returning e")
         return e
     f = fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path)
     if f:
-        #print("returning f")
         return f
     else:
         return None
