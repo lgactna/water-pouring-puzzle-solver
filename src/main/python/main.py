@@ -63,6 +63,7 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.play_solution_button.clicked.connect(self.toggle_solution_playback)
         self.step_spinbox.valueChanged.connect(self.change_step_from_spinbox)
         self.solution_table.currentItemChanged.connect(self.change_step_from_table)
+        self.set_depth_button.clicked.connect(self.set_depth)
     def get_solution(self):
         """Get solution to the entered puzzle and act accordingly.
         
@@ -89,10 +90,11 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                            "<p>A solution could not be found.</p>"
                                            "<p>This means that the program has hit the max "
                                            "recursion depth - typically, this means that no "
-                                           "solutions were found after 1,000 steps.</p>"
+                                           "solutions were found after ~1,000 steps. (The max "
+                                           "recursion depth is currently %s.)</p>"
                                            "<p>This does not mean that no solution exists - "
                                            "rather, that it could not be found in a reasonable "
-                                           "number of steps.</p>",
+                                           "number of steps.</p>"%sys.getrecursionlimit(),
                                            QtWidgets.QMessageBox.Ok)
         elif solution == 2:
             QtWidgets.QMessageBox.critical(self, "No solution found",
@@ -176,8 +178,7 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.step_description_label.setText(action_str(current_step[0]))
         #if we've hit the end, then stop playback and change button text
         if self.playback_timer.isActive() and index+1 == len(self.solution):
-            self.playback_timer.stop()
-            self.play_solution_button.setText("Play through solution")
+            self.toggle_solution_playback()
     def toggle_solution_playback(self):
         """Toggle a QTimer that will automatically step through the solution at regular intervals.
         
@@ -186,6 +187,7 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.playback_timer.isActive():
             self.playback_timer.stop()
             self.play_solution_button.setText("Play through solution")
+            self.steprate_spinbox.setEnabled(True)
         else:
             #go to beginning if currently at end
             if self.step_spinbox.value() == len(self.solution):
@@ -193,7 +195,10 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             interval = self.steprate_spinbox.value()
             self.playback_timer.start(interval)
             self.play_solution_button.setText("Stop playback")
+            #disable the spinbox to prevent a user from thinking they can change it midway
+            self.steprate_spinbox.setEnabled(False)
     def resize_bars(self):
+        """Resize the progress bars/containers."""
         #here we determine the maximum height that a bar can be, which is the size
         #of this layout
         max_height = self.verticalLayout_3.geometry().height()
@@ -201,6 +206,18 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         sizes = calculate_container_sizes(self.problem_parameters[0], self.problem_parameters[1], max_height)
         self.container_1_bar.setFixedHeight(sizes[0])
         self.container_2_bar.setFixedHeight(sizes[1])
+    def set_depth(self):
+        """Set a new recursion limit via user input."""
+        new_depth, response = QtWidgets.QInputDialog.getInt(self, "Set max recursion depth",
+                                                  "<p>You can set the maximum recursion depth "
+                                                  "of the program here, default ~1000.</p>"
+                                                  "<p>Large values will crash the program "
+                                                  "if a solution is not found within that depth. "
+                                                  "The max is platform-dependent.</p>",
+                                                  sys.getrecursionlimit(), 0)
+        if response:
+            sys.setrecursionlimit(new_depth)
+
 
 class AppContext(ApplicationContext):
     """fbs requires that one instance of ApplicationContext be instantiated.
