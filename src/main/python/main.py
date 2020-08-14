@@ -127,13 +127,7 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.container_1_bar.setMaximum(self.problem_parameters[0])
         self.container_2_bar.setMaximum(self.problem_parameters[1])
         #resize the progress bars/"containers"
-        #here we determine the maximum height that a bar can be, which is the size
-        #of this layout
-        max_height = self.verticalLayout_3.geometry().height()
-        #print(max_height)
-        sizes = calculate_container_sizes(self.problem_parameters[0], self.problem_parameters[1], max_height)
-        self.container_1_bar.setFixedHeight(sizes[0])
-        self.container_2_bar.setFixedHeight(sizes[1])
+        self.resize_bars()
         #set current step to step 1
         self.update_solution_area(0)
     def change_step_from_buttons(self, direction):
@@ -199,6 +193,15 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             interval = self.steprate_spinbox.value()
             self.playback_timer.start(interval)
             self.play_solution_button.setText("Stop playback")
+    def resize_bars(self):
+        #here we determine the maximum height that a bar can be, which is the size
+        #of this layout
+        max_height = self.verticalLayout_3.geometry().height()
+        #print(max_height)
+        sizes = calculate_container_sizes(self.problem_parameters[0], self.problem_parameters[1], max_height)
+        self.container_1_bar.setFixedHeight(sizes[0])
+        self.container_2_bar.setFixedHeight(sizes[1])
+
 class AppContext(ApplicationContext):
     """fbs requires that one instance of ApplicationContext be instantiated.
 
