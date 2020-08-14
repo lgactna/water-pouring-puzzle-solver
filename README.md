@@ -4,7 +4,7 @@
   <img src="src/main/icons/linux/256.png" alt="logo"/>
 </p>
 
-A program for solving two-container water pouring puzzles.
+A program built in PyQt5 and packaged with fbs for solving two-container water pouring puzzles.
 
 I got angry enough at one of these that this one-day project was the result.
 
