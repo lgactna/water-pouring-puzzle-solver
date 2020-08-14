@@ -3,7 +3,7 @@ A solver for water pouring riddles.
 
 I got angry enough at one of these that this one-day project was the result.
 
-This solver uses exhaustive search (with memoization) - it's inefficient but it works. 
+This solver uses exhaustive search (with partial memoization) - it's inefficient but it works. 
 
 ## Usage
 1. eee

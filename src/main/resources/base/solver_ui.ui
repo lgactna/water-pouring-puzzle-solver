@@ -17,16 +17,6 @@
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Capacity of Container 1:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="capacity_1_spinbox">
         <property name="maximum">
@@ -44,23 +34,34 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Capacity of Container 1:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
        <widget class="QSpinBox" name="capacity_2_spinbox">
         <property name="maximum">
          <number>1000000000</number>
         </property>
-        <property name="value">
-         <number>0</number>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSpinBox" name="starting_1_spinbox">
+        <property name="maximum">
+         <number>1000000000</number>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Starting volume:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <item row="1" column="3">
+       <widget class="QSpinBox" name="starting_2_spinbox">
+        <property name="maximum">
+         <number>1000000000</number>
         </property>
        </widget>
       </item>
@@ -74,7 +75,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4" rowspan="2">
+      <item row="0" column="6" rowspan="2">
        <widget class="QPushButton" name="solve_button">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -98,17 +99,30 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QSpinBox" name="starting_1_spinbox">
-        <property name="maximum">
-         <number>1</number>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Starting volume:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="1" column="3">
-       <widget class="QSpinBox" name="starting_2_spinbox">
+      <item row="0" column="4" rowspan="2">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Target:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5" rowspan="2">
+       <widget class="QSpinBox" name="target_spinbox">
         <property name="maximum">
-         <number>1</number>
+         <number>1000000000</number>
         </property>
        </widget>
       </item>
@@ -119,7 +133,7 @@
       <item>
        <widget class="QTabWidget" name="tab_widget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -128,14 +142,17 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QTableWidget" name="solution_table">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <column>
              <property name="text">
-              <string>1</string>
+              <string>Container 1</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>2</string>
+              <string>Container 2</string>
              </property>
             </column>
             <column>
@@ -161,26 +178,7 @@
              </font>
             </property>
             <property name="plainText">
-             <string>asdfasfsdfdsf
-asdf
-asd
-
-asf
-sf
-fds
-f
-sdf
-d
-f
-df
-d
-f
-df
-dfd
-f
-df
-
-</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -249,9 +247,9 @@ df
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="max_steps_label">
                <property name="text">
-                <string>of 33</string>
+                <string>of 0</string>
                </property>
               </widget>
              </item>

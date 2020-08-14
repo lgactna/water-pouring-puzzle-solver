@@ -102,7 +102,7 @@ def solve(size_1, size_2, target, initial_1=0, initial_2=0):
     by default.
     """
     #check if this problem is even solvable
-    if size_1 <= 0 or size_2 <= 0 or target > size_1 or target > size_2:
+    if initial_1 > size_1 or initial_2 > size_2 or (target > size_1 and target > size_2):
         return 0
     #below are always invalid states and should always kill a branch
     invalid = [[initial_1, initial_2], [size_1, size_2]]
@@ -113,28 +113,31 @@ def solve(size_1, size_2, target, initial_1=0, initial_2=0):
     if resulting_path:
         return resulting_path
 
-def turn_into_human_language(size_1, size_2, final_path, initial_1=0, initial_2=0):
+def to_readable(size_1, size_2, final_path, initial_1=0, initial_2=0):
     """Output the process into a human-readable format."""
     current_1 = initial_1
     current_2 = initial_2
-    print(f'Start: {current_1}/{size_1}, {current_2}/{size_2}')
+    final = ""
+    final += (f'Start: {current_1}/{size_1}, {current_2}/{size_2}\n')
+    index = 0
     for element in final_path:
         action = element[0]
         current_1 = element[1]
         current_2 = element[2]
+        index = element[3]+1
 
         if action == 0:
             current_1 = 0
-            print(f'Empty container 1: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Empty container 1: {current_1}/{size_1}, {current_2}/{size_2}\n')
         elif action == 1:
             current_2 = 0
-            print(f'Empty container 2: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Empty container 2: {current_1}/{size_1}, {current_2}/{size_2}\n')
         elif action == 2:
             current_1 = size_1
-            print(f'Fill container 1 to full: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Fill container 1 to full: {current_1}/{size_1}, {current_2}/{size_2}\n')
         elif action == 3:
             current_2 = size_2
-            print(f'Fill container 2 to full: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Fill container 2 to full: {current_1}/{size_1}, {current_2}/{size_2}\n')
         elif action == 4:
             if size_1 - current_1 > current_2:
                 current_1 += current_2
@@ -142,7 +145,7 @@ def turn_into_human_language(size_1, size_2, final_path, initial_1=0, initial_2=
             else:
                 current_2 -= size_1 - current_1
                 current_1 = size_1
-            print(f'Fill container 1 from 2: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Fill container 1 from 2: {current_1}/{size_1}, {current_2}/{size_2}\n')
         elif action == 5:
             if size_2 - current_2 > current_1:
                 current_2 += current_1
@@ -150,6 +153,18 @@ def turn_into_human_language(size_1, size_2, final_path, initial_1=0, initial_2=
             else:
                 current_1 -= size_2 - current_2
                 current_2 = size_2
-            print(f'Fill container 2 from 1: {current_1}/{size_1}, {current_2}/{size_2}')
-    print(f'Target reached: {current_1}/{size_1}, {current_2}/{size_2}')
+            final += (f'{index} - Fill container 2 from 1: {current_1}/{size_1}, {current_2}/{size_2}\n')
+    final += (f'Target reached: {current_1}/{size_1}, {current_2}/{size_2}\n')
+    return final
 
+def action(index):
+    """Return a string describing the action associated with `index`."""
+    actions = {
+        0:"Empty container 1.",
+        1:"Empty container 2.",
+        2:"Fill container 1 to capacity.",
+        3:"Fill container 2 to capacity.",
+        4:"Fill container 1 from 2.",
+        5:"Fill container 2 from 1."
+    }
+    return actions[index]

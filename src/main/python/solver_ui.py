@@ -21,10 +21,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.capacity_1_spinbox = QtWidgets.QSpinBox(self.centralwidget)
         self.capacity_1_spinbox.setMaximum(1000000000)
         self.capacity_1_spinbox.setObjectName("capacity_1_spinbox")
@@ -33,15 +29,22 @@ class Ui_MainWindow(object):
         self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 0, 2, 1, 1)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.capacity_2_spinbox = QtWidgets.QSpinBox(self.centralwidget)
         self.capacity_2_spinbox.setMaximum(1000000000)
-        self.capacity_2_spinbox.setProperty("value", 0)
         self.capacity_2_spinbox.setObjectName("capacity_2_spinbox")
         self.gridLayout.addWidget(self.capacity_2_spinbox, 1, 1, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 1, 2, 1, 1)
+        self.starting_1_spinbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.starting_1_spinbox.setMaximum(1000000000)
+        self.starting_1_spinbox.setObjectName("starting_1_spinbox")
+        self.gridLayout.addWidget(self.starting_1_spinbox, 0, 3, 1, 1)
+        self.starting_2_spinbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.starting_2_spinbox.setMaximum(1000000000)
+        self.starting_2_spinbox.setObjectName("starting_2_spinbox")
+        self.gridLayout.addWidget(self.starting_2_spinbox, 1, 3, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_2.setObjectName("label_2")
@@ -57,15 +60,19 @@ class Ui_MainWindow(object):
         font.setPointSize(13)
         self.solve_button.setFont(font)
         self.solve_button.setObjectName("solve_button")
-        self.gridLayout.addWidget(self.solve_button, 0, 4, 2, 1)
-        self.starting_1_spinbox = QtWidgets.QSpinBox(self.centralwidget)
-        self.starting_1_spinbox.setMaximum(1)
-        self.starting_1_spinbox.setObjectName("starting_1_spinbox")
-        self.gridLayout.addWidget(self.starting_1_spinbox, 0, 3, 1, 1)
-        self.starting_2_spinbox = QtWidgets.QSpinBox(self.centralwidget)
-        self.starting_2_spinbox.setMaximum(1)
-        self.starting_2_spinbox.setObjectName("starting_2_spinbox")
-        self.gridLayout.addWidget(self.starting_2_spinbox, 1, 3, 1, 1)
+        self.gridLayout.addWidget(self.solve_button, 0, 6, 2, 1)
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 1, 2, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout.addWidget(self.label_5, 0, 4, 2, 1)
+        self.target_spinbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.target_spinbox.setMaximum(1000000000)
+        self.target_spinbox.setObjectName("target_spinbox")
+        self.gridLayout.addWidget(self.target_spinbox, 0, 5, 2, 1)
         self.verticalLayout_6.addLayout(self.gridLayout)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -76,6 +83,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.tab)
         self.verticalLayout.setObjectName("verticalLayout")
         self.solution_table = QtWidgets.QTableWidget(self.tab)
+        self.solution_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.solution_table.setObjectName("solution_table")
         self.solution_table.setColumnCount(3)
         self.solution_table.setRowCount(0)
@@ -96,6 +104,7 @@ class Ui_MainWindow(object):
         font.setFamily("Consolas")
         font.setPointSize(10)
         self.solution_text.setFont(font)
+        self.solution_text.setPlainText("")
         self.solution_text.setObjectName("solution_text")
         self.verticalLayout_2.addWidget(self.solution_text)
         self.tab_widget.addTab(self.tab_2, "")
@@ -127,9 +136,9 @@ class Ui_MainWindow(object):
         self.step_spinbox.setMaximum(1000)
         self.step_spinbox.setObjectName("step_spinbox")
         self.horizontalLayout.addWidget(self.step_spinbox)
-        self.label_8 = QtWidgets.QLabel(self.solution_area)
-        self.label_8.setObjectName("label_8")
-        self.horizontalLayout.addWidget(self.label_8)
+        self.max_steps_label = QtWidgets.QLabel(self.solution_area)
+        self.max_steps_label.setObjectName("max_steps_label")
+        self.horizontalLayout.addWidget(self.max_steps_label)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
@@ -212,49 +221,30 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.tab_widget.setCurrentIndex(1)
+        self.tab_widget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Capacity of Container 1:"))
         self.label_3.setText(_translate("MainWindow", "Starting volume:"))
-        self.label_4.setText(_translate("MainWindow", "Starting volume:"))
+        self.label.setText(_translate("MainWindow", "Capacity of Container 1:"))
         self.label_2.setText(_translate("MainWindow", "Capacity of Container 2:"))
         self.solve_button.setText(_translate("MainWindow", "Solve"))
+        self.label_4.setText(_translate("MainWindow", "Starting volume:"))
+        self.label_5.setText(_translate("MainWindow", "Target:"))
         item = self.solution_table.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "1"))
+        item.setText(_translate("MainWindow", "Container 1"))
         item = self.solution_table.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "2"))
+        item.setText(_translate("MainWindow", "Container 2"))
         item = self.solution_table.horizontalHeaderItem(2)
         item.setText(_translate("MainWindow", "Action"))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab), _translate("MainWindow", "Table"))
-        self.solution_text.setPlainText(_translate("MainWindow", "asdfasfsdfdsf\n"
-"asdf\n"
-"asd\n"
-"\n"
-"asf\n"
-"sf\n"
-"fds\n"
-"f\n"
-"sdf\n"
-"d\n"
-"f\n"
-"df\n"
-"d\n"
-"f\n"
-"df\n"
-"dfd\n"
-"f\n"
-"df\n"
-"\n"
-""))
         self.tab_widget.setTabText(self.tab_widget.indexOf(self.tab_2), _translate("MainWindow", "Text"))
         self.step_back_button.setText(_translate("MainWindow", "..."))
         self.step_forward_button.setText(_translate("MainWindow", "..."))
         self.label_7.setText(_translate("MainWindow", "Step"))
-        self.label_8.setText(_translate("MainWindow", "of 33"))
+        self.max_steps_label.setText(_translate("MainWindow", "of 0"))
         self.container_1_bar.setFormat(_translate("MainWindow", "%p"))
         self.container_1_label.setText(_translate("MainWindow", "0/0"))
         self.container_2_bar.setFormat(_translate("MainWindow", "%p"))
