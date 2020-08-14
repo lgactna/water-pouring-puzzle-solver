@@ -1,11 +1,38 @@
 #region imports
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 #------
 from solver_ui import Ui_MainWindow
 from solver import solve, to_readable, action_str
 #endregion imports
+
+def calculate_container_sizes(size_1, size_2, max_height):
+    """Determine how tall each container (progress bar) should be.
+    
+    This is done by first allocating 25 px per capacity unit for each container.
+    If either container exceeds the maximum allowed height dictated by its layout,
+    then the largest container is set to the height of the layout. The smaller container
+    is then sized proportionally to the larger container.
+    Returns a list of [`height_1`, `height_2`].
+    """
+    #We reduce the inherent max height by 25, the height of the label and then some
+    #Since the layout includes this label, it we need to account for it
+    #Otherwise the layout will resize itself to be larger, thus uncapping the max height
+    max_height -= 25
+    if size_1*25 > max_height or size_2*25 > max_height:
+        if size_1 > size_2:
+            height_1 = max_height
+            height_2 = (size_2*max_height)/size_1
+        else:
+            height_2 = max_height
+            height_1 = (size_1*max_height)/size_2
+    else:
+        height_1 = size_1*25
+        height_2 = size_2*25
+    #print(height_1, height_2, max_height)
+    return [height_1, height_2]
+
 
 class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     """The main window. Instantiated once."""
@@ -19,15 +46,16 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.solution = []
         self.problem_parameters = []
 
-        #here we'll define how the playback_timer should work 
+        #here we'll define how the playback_timer should work
         #if a user is stepping through at intervals
         self.playback_timer = QtCore.QTimer()
         #this should always result in incrementing the index
         self.playback_timer.timeout.connect(lambda: self.update_solution_area(self.step_spinbox.value()))
 
+        #make the last column bigger
         self.solution_table.setColumnWidth(2, 200)
 
-        self.container_2_bar.setFixedHeight(150) #make a ratio calculation thing somewhere, where "all the way up" is 25 capacity
+        self.container_2_bar.setFixedHeight(150) #just for initialization/demonstration
 
         self.solve_button.clicked.connect(self.get_solution)
         self.step_back_button.clicked.connect(lambda: self.change_step_from_buttons("back"))
@@ -62,9 +90,9 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                            "<p>This means that the program has hit the max "
                                            "recursion depth - typically, this means that no "
                                            "solutions were found after 1,000 steps.</p>"
-                                           "</p>This does not mean that no solution exists - "
+                                           "<p>This does not mean that no solution exists - "
                                            "rather, that it could not be found in a reasonable "
-                                           "number of steps.<p>",
+                                           "number of steps.</p>",
                                            QtWidgets.QMessageBox.Ok)
         elif solution == 2:
             QtWidgets.QMessageBox.critical(self, "No solution found",
@@ -90,9 +118,6 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def update_solution_text(self, text):
         """Update the solution text area with `text`, a `str`."""
         self.solution_text.setPlainText(text)
-    def change_bar_height(self, container, height):
-        """Update `container` (`int`) to be `height` px high."""
-        pass
     def initialize_solution_area(self):
         """Initialize the solution area."""
         self.solution_area.setEnabled(True)
@@ -101,8 +126,15 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.step_spinbox.setMaximum(len(self.solution))
         self.container_1_bar.setMaximum(self.problem_parameters[0])
         self.container_2_bar.setMaximum(self.problem_parameters[1])
-        #resize the bars
-        #set highlighted table row
+        #resize the progress bars/"containers"
+        #here we determine the maximum height that a bar can be, which is the size
+        #of this layout
+        max_height = self.verticalLayout_3.geometry().height()
+        #print(max_height)
+        sizes = calculate_container_sizes(self.problem_parameters[0], self.problem_parameters[1], max_height)
+        self.container_1_bar.setFixedHeight(sizes[0])
+        self.container_2_bar.setFixedHeight(sizes[1])
+        #set current step to step 1
         self.update_solution_area(0)
     def change_step_from_buttons(self, direction):
         """Increment or decrement what step is currently displayed in the solution area.
@@ -116,11 +148,12 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             new_index = current_index+1
         self.update_solution_area(new_index)
     def change_step_from_spinbox(self, step):
-        """Handles step updates from spinbox changes."""
+        """Handle step updates from spinbox changes."""
         self.update_solution_area(step-1, False)
     def change_step_from_table(self, table_item):
-        """Handles step updates from table clicks."""
-        self.update_solution_area(table_item.row(), highlight_table=False)
+        """Handle step updates from table clicks."""
+        if table_item:
+            self.update_solution_area(table_item.row(), highlight_table=False)
     def update_solution_area(self, index, change_spinbox=True, highlight_table=True):
         """Update the solution area with the values for step `index` (zero-indexed).
 
@@ -154,7 +187,8 @@ class ApplicationWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def toggle_solution_playback(self):
         """Toggle a QTimer that will automatically step through the solution at regular intervals.
         
-        Also change the button text to reflect what will happen."""
+        Also change the button text to reflect what will happen.
+        """
         if self.playback_timer.isActive():
             self.playback_timer.stop()
             self.play_solution_button.setText("Play through solution")

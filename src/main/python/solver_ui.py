@@ -154,7 +154,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addItem(spacerItem3)
         self.container_1_bar = QtWidgets.QProgressBar(self.solution_area)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.container_1_bar.sizePolicy().hasHeightForWidth())
         self.container_1_bar.setSizePolicy(sizePolicy)
