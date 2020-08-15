@@ -6,8 +6,23 @@
 #But this is the first time I've ever done work with recursion so at least it's better than nothing
 
 #A container object would work much better
+#At first it didn't work because all the functions referred to the same three containers
+#So I rewrote everything to just represent a container as [fill, capacity]
+#I forgot that creating new Container objects existed
+#I'll rewrite to use Container objects one day
+class Container():
+    """Represents a water container."""
 
-def resolve_current(action_id, current_1, size_1, current_2, size_2, target, already_tried, path):
+    def __init__ (self, capacity, initial_fill=0):
+        """Initialize container."""
+        self.capacity = capacity
+        self.fill = initial_fill
+    def empty(self):
+        self.fill = 0
+    def fill_max(self):
+        self.fill = self.capacity
+
+def resolve_current(action_id, acted_on, containers, target, already_tried, path):
     """Determine if the target volume has been reached and act accordingly.
     If either container - `current_1` or `current_2` - is at the target volume, then return all
     data involved getting there, stored in `path`. Else, check if this combination of volumes has
@@ -15,99 +30,94 @@ def resolve_current(action_id, current_1, size_1, current_2, size_2, target, alr
     already been evaluated, kill this branch; if not, start another branch and perform all six
     possible actions on the current containers.
     """
-    if target in (current_1, current_2):
-        #print(f'Found a solution at path length {len(path)}; {current_1}/{size_1}, {current_2}/{size_2}')
-        path.append([action_id, current_1, current_2, len(path)])
+    
+    current_fill_states = []
+    current_container_states = []
+    for container in containers:
+        current_fill_states.append(container[0])
+        current_container_states.append([container[0], container[1]])
+    #print(current_fill_states)
+    if target in current_fill_states:
+        path.append([action_id, acted_on, current_container_states, len(path)])
         return path
+    if current_fill_states in already_tried:
+        #print(already_tried)
+        #print(f'{current_fill_states} failed')
+        return None
     else:
-        if [current_1, current_2] in already_tried:
-            #print(already_tried)
-            #print(f'killing {current_1}/{size_1}, {current_2}/{size_2} with a path length of {len(path)-1}')
-            return None
+        already_tried.append(current_fill_states)
+        path.append([action_id, acted_on, current_container_states, len(path)])
+        result = branch(containers, target, already_tried, path)
+        if result:
+            return result
         else:
-            already_tried.append([current_1, current_2])
-            path.append([action_id, current_1, current_2, len(path)])
-            result = branch(current_1, size_1, current_2, size_2, target, already_tried, path)
-            if result:
-                return result
-def empty_1(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Empty container 1 and call `resolve_current`."""
-    current_1 = 0
-    return resolve_current(0, current_1, size_1, current_2, size_2, target, already_tried, path)
-def empty_2(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Empty container 2 and call `resolve_current`."""
-    current_2 = 0
-    return resolve_current(1, current_1, size_1, current_2, size_2, target, already_tried, path)
-def fill_1(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Fill container 1 to capacity and call `resolve_current`."""
-    current_1 = size_1
-    return resolve_current(2, current_1, size_1, current_2, size_2, target, already_tried, path)
-def fill_2(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Fill container 2 to capacity and call `resolve_current`."""
-    current_2 = size_2
-    return resolve_current(3, current_1, size_1, current_2, size_2, target, already_tried, path)
-def fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path):
+            return None
+def empty_container(containers, act_on, target, already_tried, path):
+    """Empty container and call `resolve_current`."""
+    print(f"Emptied container {act_on}")
+    containers[act_on][0] = 0
+    return resolve_current(1, act_on, containers, target, already_tried, path)
+def fill_container(containers, act_on, target, already_tried, path):
+    """Fill container to capacity and call `resolve_current`."""
+    print(f"Filled container {act_on}")
+    containers[act_on][0] = containers[act_on][1]
+    return resolve_current(2, act_on, containers, target, already_tried, path)
+def fill_1_from_2(containers, act_on, target, already_tried, path):
     """Fill container 1 with the liquid from container 2.
+
     Either empty container 2 if its contents are greater than the negative space of container
     1, or fill container 1 to capacity (leaving some liquid in container 2).
     """
-    if size_1 - current_1 > current_2:
-        current_1 += current_2
-        current_2 = 0
-    else:
-        current_2 -= size_1 - current_1
-        current_1 = size_1
-    return resolve_current(4, current_1, size_1, current_2, size_2, target, already_tried, path)
-def fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Fill container 2 with the liquid from container 1.
+    print(f"Filled container {act_on[0]} from {act_on[1]}")
+    '''
+    #...
 
-    Either empty container 1 if its contents are greater than the negative space of container
-    1, or fill container 2 to capacity (leaving some liquid in container 1).
+    container_1_fill = containers[act_on[0]][0]
+    container_2_fill = containers[act_on[1]][0]
+    container_1_capacity = containers[act_on[0]][1]
+    container_2_capacity = containers[act_on[1]][1]
+    '''
+    #print(container_1_fill)
+    #print(container_2_fill)
+    if containers[act_on[0]][1] - containers[act_on[0]][0] > containers[act_on[1]][0]:
+        containers[act_on[0]][0] += containers[act_on[1]][0]
+        containers[act_on[1]][0] = 0
+    else:
+        containers[act_on[1]][0] -= containers[act_on[0]][1] - containers[act_on[0]][0]
+        containers[act_on[0]][0] = containers[act_on[0]][1] = containers[act_on[0]][1]
+    #print(container_1.fill)
+    #print(container_2.fill)
+    return resolve_current(3, act_on, containers, target, already_tried, path)
+def branch(containers, target, already_tried, path):
+    """Perform all possible actions on the current set of containers.
+    
+    The order matters here, so all possible connections are tested.
     """
-    if size_2 - current_2 > current_1:
-        current_2 += current_1
-        current_1 = 0
-    else:
-        current_1 -= size_2 - current_2
-        current_2 = size_2
-    return resolve_current(5, current_1, size_1, current_2, size_2, target, already_tried, path)
-def branch(current_1, size_1, current_2, size_2, target, already_tried, path):
-    """Perform all possible actions on the current set of containers."""
-    a = empty_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if a:
-        return a
-    b = empty_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if b:
-        return b
-    c = fill_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if c:
-        return c
-    d = fill_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if d:
-        return d
-    e = fill_1_from_2(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if e:
-        return e
-    f = fill_2_from_1(current_1, size_1, current_2, size_2, target, already_tried, path)
-    if f:
-        return f
-    else:
-        return None
+    for container_1_index in range(0, len(containers)):
+        a = empty_container(containers, container_1_index, target, already_tried, path)
+        if a:
+            return a
+        b = fill_container(containers, container_1_index, target, already_tried, path)
+        if b:
+            return b
+        for container_2_index in range(0, len(containers)):
+            if container_1_index == container_2_index:
+                continue
+            c = fill_1_from_2(containers, [container_1_index, container_2_index], target, already_tried, path)
+            if c:
+                return c
+            d = fill_1_from_2(containers, [container_2_index, container_1_index], target, already_tried, path)
+            if d:
+                return d
+    return None
 
-def solve(size_1, size_2, target, initial_1=0, initial_2=0):
+def solve(containers, target):
     """Solve (and validate) a given water pouring problem.
 
-    `size_1` is the capacity of container 1, and `size_2` is the capacity of container 2.
-    `target` is the desired volume in either container. Both containers are empty to begin
-    by default.
+    `containers` is an array of Container objects.
     """
-    #check if this problem is even solvable
-    if initial_1 > size_1 or initial_2 > size_2 or (target > size_1 and target > size_2):
-        return 0
-    #below are always invalid states and should always kill a branch
-    invalid = [[initial_1, initial_2], [size_1, size_2]]
     try:
-        resulting_path = branch(initial_1, size_1, initial_2, size_2, target, invalid, [])
+        resulting_path = branch(containers, target, [], [])
     except RecursionError:
         return 1
     if resulting_path:
@@ -115,48 +125,29 @@ def solve(size_1, size_2, target, initial_1=0, initial_2=0):
     else:
         return 2
 
-def to_readable(size_1, size_2, final_path, initial_1=0, initial_2=0):
-    """Output the process into a human-readable format."""
-    current_1 = initial_1
-    current_2 = initial_2
-    final = ""
-    final += (f'Start: {current_1}/{size_1}, {current_2}/{size_2}\n')
-    index = 0
-    for element in final_path:
-        action = element[0]
-        current_1 = element[1]
-        current_2 = element[2]
-        index = element[3]+1
+def enumerate_str(containers):
+    return_str = ""
+    for container in containers:
+        return_str += f'{container[0]}/{container[1]}, '
+    return_str = return_str[:-2]
+    return return_str
 
-        if action == 0:
-            current_1 = 0
-            final += (f'{index} - Empty container 1: {current_1}/{size_1}, {current_2}/{size_2}\n')
-        elif action == 1:
-            current_2 = 0
-            final += (f'{index} - Empty container 2: {current_1}/{size_1}, {current_2}/{size_2}\n')
+def to_readable(final_path):
+    """Output the process into a human-readable format."""
+    final = ""
+    final += (f'Start: {enumerate_str(final_path[0][2])}\n')
+    for step in final_path:
+        action = step[0]
+        acted_on = step[1]
+        containers = step[2]
+        index = step[3]+1
+        if action == 1:
+            final += (f'{index} - Empty container {acted_on}: {enumerate_str(containers)}\n')
         elif action == 2:
-            current_1 = size_1
-            final += (f'{index} - Fill container 1 to full: {current_1}/{size_1}, {current_2}/{size_2}\n')
+            final += (f'{index} - Fill container {acted_on}: {enumerate_str(containers)}\n')
         elif action == 3:
-            current_2 = size_2
-            final += (f'{index} - Fill container 2 to full: {current_1}/{size_1}, {current_2}/{size_2}\n')
-        elif action == 4:
-            if size_1 - current_1 > current_2:
-                current_1 += current_2
-                current_2 = 0
-            else:
-                current_2 -= size_1 - current_1
-                current_1 = size_1
-            final += (f'{index} - Fill container 1 from 2: {current_1}/{size_1}, {current_2}/{size_2}\n')
-        elif action == 5:
-            if size_2 - current_2 > current_1:
-                current_2 += current_1
-                current_1 = 0
-            else:
-                current_1 -= size_2 - current_2
-                current_2 = size_2
-            final += (f'{index} - Fill container 2 from 1: {current_1}/{size_1}, {current_2}/{size_2}\n')
-    final += (f'Target reached: {current_1}/{size_1}, {current_2}/{size_2}\n')
+            final += (f'{index} - Fill container {acted_on[0]} from {acted_on[1]}: {enumerate_str(containers)}\n')
+    final += (f'Target reached: {enumerate_str(containers)}\n')
     return final
 
 def action_str(index):
@@ -170,3 +161,15 @@ def action_str(index):
         5:"Fill container 2 from 1."
     }
     return actions[index]
+
+if __name__ == "__main__":
+    c1 = [0, 69]
+    c2 = [0, 42]
+    c3 = [0, 31]
+    c4 = [0, 25]
+    aa = solve([c1, c2, c3, c4], 10)
+    print(aa)
+    if aa not in (1, 2):
+        bb = to_readable(aa)
+        print(bb)
+
